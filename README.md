@@ -1,0 +1,125 @@
+This slim version of the Radiomics Platform does not contain functions and widgets associated with batch processing. 
+It is used for single-case Radiomics Feature Extraction of an image and label-map pair loaded into Slicer.
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Installation:
+In Slicer, go to Edit->Application Settings->Modules. In the 'Additional module paths' box, click the double arrows 
+and add the path to the RadiomicsPlatform directory (containing the CMakeLists.txt file, Radiomics.py file, and 3 directories).
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Example of Recommended Folder Hierarchy (Using one *.nrrd image (ImageX) with a corresponding label map):
+    <DatasetName>
+        <PatientID>
+            <StudyDate_StudyDescription>
+                "Reconstructions"
+                    <ImageXSeriesDescription>.nrrd
+                "Segmentations"
+                    <ImageXSeriesDescription>_tumor_labelMap.nrrd
+                "Resources"
+                    (Other Files)
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The 'AdvancedSettings' or 'Settings' Dict object:
+This is passed to the RadiomicsPlatform Module's 'RadiomicsPreProcessing' Class. The Dict Object Contains the following information:
+Settings["levels"]: 
+  A List of the target label values as strings in the 
+  label-map image i.e. [1] or [1,8]. 
+  TODO: Radiomics features will be computed separately for each label value.
+  
+Settings["resampledpixelspacing"]:
+  A 3-tuple representing the final pixel-spacing to resample the image
+  prior to computing Radiomics features i.e. (1,1,1) or (3,3,3).
+  If this field is set to the bool value, False, there will be no resampling
+  and the original (base) pixel-spacing will be used.
+
+Settings["binwidth"]:
+  An integer representing the bin width (a range of pixel intensity values). Default is 25.
+  Prior to computing features, The voxel intensity values within the tumor region 
+  will be assigned to a bin index, with bin edges centered at the 0 value.
+    
+Settings["modality"]:
+  A string representing the modality of the image i.e. "CT", "MRI", "PET". 
+
+Settings["imagefilepath"]:
+  A string representing the absolute filepath of the image file
+  i.e. "C://Dataset1//234056//07112015_Study1//Reconstructions//CT_Lung.nrrd"
+
+Settings["labelfilepath"]:
+  A string representing the absolute filepath of the label-map file
+  i.e. "C://Dataset1//234056//07112015_Study1//Segmentations//CT_Lung_IndexedLabelmap.nrrd"
+  
+Settings["basepixelspacing"]:
+  A 3-tuple representing the original pixel spacing of the image i.e. (1.1, 1.1, 3.87).
+
+Settings["dimensions"]
+  A 3-tuple representing the original dimensions of the image in (i,j,k) i.e. (512,512,34).
+
+Settings["seriesdescription"]:
+  A string representing the series description for the image. 
+  Ideally, the series description is the basename of the image filepath.
+  i.e. "C://Dataset1//234056//07112015_Study1//Reconstructions//CT_Lung.nrrd"
+    Series Description is "CT_Lung"
+  
+Settings["studydate"]:
+  A string representing the study date for the image. 
+  Ideally, the study date is the basename of the directory two directories up from the image file.
+  i.e. "C://Dataset1//234056//07112015_Study1//Reconstructions//CT_Lung.nrrd"
+    The study date is "07112015_Study1"
+    
+Settings["patientid"]:
+  A string representing the PatientID for the image. 
+  Ideally, the PatientID is the basename of the directory three directories up from the image file.
+  i.e. "C://Dataset1//234056//07112015_Study1//Reconstructions//CT_Lung.nrrd"
+    The PatientID is "234056"
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+TODO: 
+1) A function for 3D Interpolation of images and label maps to a standardized pixel-spacing (i.e. 1x1x1 or 3x3x3) independently of Slicer.
+2) Debug some of the GLRL features - some do not match RadiomicsToolbox values.
+3) Finish implementing Gray-Level Size Zone Matrix (GLSZM) computation. The GLSZM features are identical to GLRL features. 
+4) Debug Laplacian of a Gaussian features to approximately match RadiomicsToolbox values.
+5) Finish implementing wavelet transform by integrating PyWavelets wavedec functions. 
+    Along the lines of:
+    http://stackoverflow.com/questions/5707353/how-to-extend-pywavelets-to-work-with-n-dimensional-data
+
+Other
+1) Optimize GLRL matrix computation (i.e. use itertools to join lists of diagonals).
+2) Use SimpleITK filters where possible in feature computations.
+3) Add 2D maximum diameters as Shape features.
+4) Apply a polygonal mesh on the tumor to better approximate the surface area. 
+
+
+# README #
+
+This README would normally document whatever steps are necessary to get your application up and running.
+
+### What is this repository for? ###
+
+* Quick summary
+* Version
+* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+
+### How do I get set up? ###
+
+* Summary of set up
+* Configuration
+* Dependencies
+* Database configuration
+* How to run tests
+* Deployment instructions
+
+### Contribution guidelines ###
+
+* Writing tests
+* Code review
+* Other guidelines
+
+### Who do I talk to? ###
+
+* Repo owner or admin
+* Other community or team contact
