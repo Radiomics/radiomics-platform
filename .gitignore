@@ -40,6 +40,9 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+
+# Temp editor files
+*~
 nosetests.xml
 coverage.xml
 *,cover
