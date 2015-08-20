@@ -1,0 +1,35 @@
+Radiomics Batch Extract
+	Settings:
+		mainPatientDir: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset
+		outputDir: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\_RadiomicsData_20150820-130632
+		KeywordMatchingSettings:  {'selLabel': [['label'], ['null']], 'Mask': '*.nrrd', 'selImage': [[''], ['label']]}
+
+
+Loading Data for Patient: TCGA-02-0003_BrainMRI from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0003_BrainMRI
+	{'studydate': '1997-06-08_PREOP', 'dimensions': (256, 256, 25), 'imagefilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-02-0003_BrainMRI\\1997-06-08_PREOP\\Reconstructions\\AXIAL-T1-POST-GD_TCGA-02-0003_TCGA-02-0003_PREOP_SCAN13_Background.nrrd', 'seriesdescription': 'AXIAL-T1-POST-GD_TCGA-02-0003_TCGA-02-0003_PREOP_SCAN13_Background', 'basepixelspacing': (0.7812499999999999, 0.7812499999999999, 6.499999999999998), 'patientid': 'TCGA-02-0003_BrainMRI', 'levels': ['1'], 'binwidth': 25, 'labelfilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-02-0003_BrainMRI\\1997-06-08_PREOP\\Segmentations\\AXIAL-T1-POST-GD_TCGA-02-0003_TCGA-02-0003_PREOP_SCAN13_FSL-Clustered-labelMap_binarized_labelMap.nrrd', 'resampledpixelspacing': False, 'modality': 'CT'}Image file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0003_BrainMRI\1997-06-08_PREOP\Reconstructions\AXIAL-T1-POST-GD_TCGA-02-0003_TCGA-02-0003_PREOP_SCAN13_Background.nrrd
+Label file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0003_BrainMRI\1997-06-08_PREOP\Segmentations\AXIAL-T1-POST-GD_TCGA-02-0003_TCGA-02-0003_PREOP_SCAN13_FSL-Clustered-labelMap_binarized_labelMap.nrrd
+Calculating Matlab Features for ID  TCGA-02-0003_BrainMRI  and sampled RAW values used :  Success for level:  1
+
+
+Loading Data for Patient: TCGA-02-0006_BrainMRI from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0006_BrainMRI
+	{'studydate': '1996-08-23_PREOP', 'dimensions': (256, 256, 23), 'imagefilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-02-0006_BrainMRI\\1996-08-23_PREOP\\Reconstructions\\AXIAL-T1-POST-GD_TCGA-02-0006_TCGA-02-0006_PREOP_SCAN6_Background.nrrd', 'seriesdescription': 'AXIAL-T1-POST-GD_TCGA-02-0006_TCGA-02-0006_PREOP_SCAN6_Background', 'basepixelspacing': (0.7812499999999999, 0.7812499999999999, 6.499999999999998), 'patientid': 'TCGA-02-0006_BrainMRI', 'levels': ['1'], 'binwidth': 25, 'labelfilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-02-0006_BrainMRI\\1996-08-23_PREOP\\Segmentations\\AXIAL-T1-POST-GD_TCGA-02-0006_TCGA-02-0006_PREOP_SCAN6_FSL-Clustered-labelMap_binarized_labelMap.nrrd', 'resampledpixelspacing': False, 'modality': 'CT'}Image file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0006_BrainMRI\1996-08-23_PREOP\Reconstructions\AXIAL-T1-POST-GD_TCGA-02-0006_TCGA-02-0006_PREOP_SCAN6_Background.nrrd
+Label file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-02-0006_BrainMRI\1996-08-23_PREOP\Segmentations\AXIAL-T1-POST-GD_TCGA-02-0006_TCGA-02-0006_PREOP_SCAN6_FSL-Clustered-labelMap_binarized_labelMap.nrrd
+Calculating Matlab Features for ID  TCGA-02-0006_BrainMRI  and sampled RAW values used :  Success for level:  1
+
+
+Loading Data for Patient: TCGA-17-Z013_LungCT from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z013_LungCT
+	{'studydate': '08202014_Study1', 'dimensions': (512, 512, 48), 'imagefilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-17-Z013_LungCT\\08202014_Study1\\Reconstructions\\Chest #1.nrrd', 'seriesdescription': 'Chest #1', 'basepixelspacing': (0.5703125, 0.5703125, 5.0), 'patientid': 'TCGA-17-Z013_LungCT', 'levels': ['1'], 'binwidth': 25, 'labelfilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-17-Z013_LungCT\\08202014_Study1\\Segmentations\\Chest #1-label.nrrd', 'resampledpixelspacing': False, 'modality': 'CT'}Image file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z013_LungCT\08202014_Study1\Reconstructions\Chest #1.nrrd
+Label file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z013_LungCT\08202014_Study1\Segmentations\Chest #1-label.nrrd
+Calculating Matlab Features for ID  TCGA-17-Z013_LungCT  and sampled RAW values used :  Success for level:  1
+
+
+Loading Data for Patient: TCGA-17-Z015_LungCT from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z015_LungCT
+	{'studydate': '08202014_Study1', 'dimensions': (512, 512, 61), 'imagefilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-17-Z015_LungCT\\08202014_Study1\\Reconstructions\\Chest Routine #1.nrrd', 'seriesdescription': 'Chest Routine #1', 'basepixelspacing': (0.6269531, 0.6269531, 5.0), 'patientid': 'TCGA-17-Z015_LungCT', 'levels': ['1'], 'binwidth': 25, 'labelfilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TCGA-17-Z015_LungCT\\08202014_Study1\\Segmentations\\Chest Routine #1-label.nrrd', 'resampledpixelspacing': False, 'modality': 'CT'}Image file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z015_LungCT\08202014_Study1\Reconstructions\Chest Routine #1.nrrd
+Label file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TCGA-17-Z015_LungCT\08202014_Study1\Segmentations\Chest Routine #1-label.nrrd
+Calculating Matlab Features for ID  TCGA-17-Z015_LungCT  and sampled RAW values used :  Success for level:  1
+
+
+Loading Data for Patient: TestPatient1_BreastMRI from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TestPatient1_BreastMRI
+	{'studydate': 'StudyDate1', 'dimensions': (512, 512, 88), 'imagefilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TestPatient1_BreastMRI\\StudyDate1\\Reconstructions\\Pre.nrrd', 'seriesdescription': 'Pre', 'basepixelspacing': (0.664062, 0.664062, 2.1), 'patientid': 'TestPatient1_BreastMRI', 'levels': ['1'], 'binwidth': 25, 'labelfilepath': 'E:\\Users\\vn061\\Desktop\\TCGA_Test_Data\\Test_Dataset\\TestPatient1_BreastMRI\\StudyDate1\\Segmentations\\Pre_labelMap.nrrd', 'resampledpixelspacing': False, 'modality': 'CT'}Image file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TestPatient1_BreastMRI\StudyDate1\Reconstructions\Pre.nrrd
+Label file loaded from: E:\Users\vn061\Desktop\TCGA_Test_Data\Test_Dataset\TestPatient1_BreastMRI\StudyDate1\Segmentations\Pre_labelMap.nrrd
+Calculating Matlab Features for ID  TestPatient1_BreastMRI  and sampled RAW values used :  Success for level:  1
