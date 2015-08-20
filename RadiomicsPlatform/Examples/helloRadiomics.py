@@ -26,7 +26,14 @@ settings = {
   "imagefilepath" : os.path.join(dataRoot,'prostate_phantom.nrrd'),
   "labelfilepath" : os.path.join(dataRoot,'prostate_phantom_label.nrrd'),
   "resampledpixelspacing" : False,
-  "basepixelspacing" : False}
+  "basepixelspacing" : (1,1,1),
+  "patientid" : "Joe",
+  "studydate" : "2015",
+  "seriesdescription" : "man",
+  "modality" : "PP",
+  "dimensions" : 3,
+  "levels" : 1,
+  "binwidth" : 200}
 
 rpp = RadiomicsPreProcessing(settings)
 
