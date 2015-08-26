@@ -107,7 +107,7 @@ class RadiomicsWidget:
     # Compute Radiomics area
     #
     self.computeRadiomicsCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.computeRadiomicsCollapsibleButton.text = "Slicer Radiomics Platform"
+    self.computeRadiomicsCollapsibleButton.text = "Radiomics Platform"
     self.layout.addWidget(self.computeRadiomicsCollapsibleButton)
     self.computeRadiomicsFormLayout = qt.QFormLayout(self.computeRadiomicsCollapsibleButton)
 
@@ -276,7 +276,7 @@ class RadiomicsWidget:
       self.sitkLabelNode = sitk.ReadImage(self.AdvancedSettings["labelfilepath"])
       
       RadiomicsPlatformLogic = radiomicsplatform.FeatureExtraction(self.sitkImageNode, self.sitkLabelNode)
-      RadiomicsPlatformLogic.SetResampledPixelSpacing(self.AdvancedSettings["resampledpixelspacing"])
+      #RadiomicsPlatformLogic.SetResampledPixelSpacing(self.AdvancedSettings["resampledpixelspacing"])
       RadiomicsPlatformLogic.SetBinWidth(self.AdancedSettings["binwidth"])  
       RadiomicsPlatformLogic.ExtractFeatures()
       RadiomicsFeatureVector = RadiomicsPlatformLogic.GetFeatureVector()
