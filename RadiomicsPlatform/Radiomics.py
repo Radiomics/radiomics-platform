@@ -10,9 +10,9 @@ import math
 import string
 import operator
 
-import RadiomicsPlatform
-import RadiomicsToolsLib
-import SlicerDataHandlingLib
+import radiomicsplatform
+import matlabbridge
+import datahandling
 
 import pdb
 
@@ -81,8 +81,7 @@ class RadiomicsWidget:
     # Feature Data
     self.FeatureVectors = []
     self.AdvancedSettings = {}
-    self.KeywordMatchSettings = {}
-    
+ 
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout(qt.QVBoxLayout())
@@ -285,113 +284,9 @@ class RadiomicsWidget:
     self.saveButton.enabled = False
     self.singleCaseInputFormLayout.layout().addWidget(self.saveButton)
     
-    """
-    #
-    # The interface we use for batch mode (not part of this module)
-    #
-    
-    #---------------------------------------------------------
-    # Radiomics Batch
-    self.tabComputeRadiomicsBatch = qt.QWidget()
-    self.RadiomicsFormLayout = qt.QFormLayout()
-    self.tabComputeRadiomicsBatch.setLayout(self.RadiomicsFormLayout)
-    self.tabComputeRadiomicsBatchName = "Batch Mode"
-    self.computeRadiomicsTabWidget.addTab(self.tabComputeRadiomicsBatch, self.tabComputeRadiomicsBatchName)
-    
-    # Input 3: Database selection
-    self.input3Frame = qt.QFrame(self.tabComputeRadiomicsBatch)
-    self.input3Frame.setLayout(qt.QHBoxLayout())
-    self.RadiomicsFormLayout.addWidget(self.input3Frame)
-    self.DatabaseButton = qt.QPushButton("Set Root Patient Directory")
-    self.DatabaseButton.toolTip = "Set the main Patient Data location"
-    self.DatabaseButton.enabled = True
-    self.input3Frame.layout().addWidget(self.DatabaseButton)
-    self.PatientSelector = qt.QComboBox()
-    self.PatientSelector.enabled = False
-    self.input3Frame.layout().addWidget(self.PatientSelector)
-    
-    # Settings Collapsible Button
-    self.SettingsCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.SettingsCollapsibleButton.text = "Settings"
-    self.SettingsCollapsibleButtonLayout = qt.QHBoxLayout()
-    self.SettingsCollapsibleButton.setLayout(self.SettingsCollapsibleButtonLayout)    
-    self.RadiomicsFormLayout.addWidget(self.SettingsCollapsibleButton)
-    self.SettingsCollapsibleButton.collapsed = False
-    self.SettingsFrame = qt.QFrame(self.SettingsCollapsibleButton)
-    self.SettingsFrame.setLayout(qt.QFormLayout())
-    self.SettingsCollapsibleButtonLayout.addWidget(self.SettingsFrame)
-    
-    # Settings 
-    self.para2 = qt.QCheckBox("Use MatlabBridge", self.SettingsFrame)
-    self.para2.toolTip = "When checked: Matlab features extracted"
-    self.para2.checked = True
-    self.SettingsFrame.layout().addRow(self.para2)
-
-    self.para3 = qt.QCheckBox("Clear Database", self.SettingsFrame)
-    self.para3.toolTip = "When checked: old database is cleared"
-    self.para3.checked = True
-    self.SettingsFrame.layout().addRow(self.para3)
-
-    # Keywords Collapsible Button
-    self.KeywordsCollapsibleButton = ctk.ctkCollapsibleButton()
-    self.KeywordsCollapsibleButton.text = "Keyword Matching"
-    self.KeywordsCollapsibleButtonLayout = qt.QHBoxLayout()
-    self.KeywordsCollapsibleButton.setLayout(self.KeywordsCollapsibleButtonLayout)    
-    self.SettingsFrame.layout().addRow(self.KeywordsCollapsibleButton)
-    self.KeywordsCollapsibleButton.collapsed = True
-    
-    self.keywordsFrame = qt.QFrame(self.KeywordsCollapsibleButton)
-    self.keywordsFrame.setLayout(qt.QFormLayout())
-    self.KeywordsCollapsibleButtonLayout.addWidget(self.keywordsFrame)
-    self.keywordsHeader = qt.QLabel("Keyword Matching:", self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.keywordsHeader)
-    
-    # File Type Radio Buttons Frame
-    self.radioButtonFrame = qt.QFrame(self.keywordsFrame)
-    self.radioButtonFrame.setLayout(qt.QFormLayout())
-    self.fileFormatGroup = qt.QButtonGroup(self.radioButtonFrame)
-    self.nrrdButton = qt.QRadioButton("NRRD")
-    self.nrrdButton.checked = True
-    self.niftiButton = qt.QRadioButton("NIFTI")
-    self.fileFormatGroup.addButton(self.nrrdButton)
-    self.fileFormatGroup.addButton(self.niftiButton)
-    self.radioButtonFrame.layout().addRow(self.nrrdButton, self.niftiButton)
-    self.inputMaskHeader = qt.QLabel("Input Image File Type:", self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.inputMaskHeader, self.radioButtonFrame)
-    
-    # Keywords Frame
-    self.inputImageKeywords = qt.QLabel("Input Image Keywords:", self.keywordsFrame)
-    self.inputImageKeywordsField = qt.QLineEdit("",self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.inputImageKeywords, self.inputImageKeywordsField )
-    
-    self.inputImageExclusionKeywords = qt.QLabel("Input Image Exclusion Keywords:", self.keywordsFrame)
-    self.inputImageExclusionKeywordsField = qt.QLineEdit("",self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.inputImageExclusionKeywords, self.inputImageExclusionKeywordsField )
-    
-    self.inputLabelKeywords = qt.QLabel("Input Label Keywords:", self.keywordsFrame)
-    self.inputLabelKeywordsField = qt.QLineEdit("",self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.inputLabelKeywords, self.inputLabelKeywordsField )
-    
-    self.inputLabelExclusionKeywords = qt.QLabel("Input Label Exclusion Keywords:", self.keywordsFrame)
-    self.inputLabelExclusionKeywordsField = qt.QLineEdit("",self.keywordsFrame)
-    self.keywordsFrame.layout().addRow(self.inputLabelExclusionKeywords, self.inputLabelExclusionKeywordsField )
-    
-    # Radiomic Mode Buttons
-    self.RadiomicButtonsFrame = qt.QFrame(self.tabComputeRadiomicsBatch)
-    self.RadiomicButtonsFrame.setLayout(qt.QHBoxLayout())
-    self.RadiomicsFormLayout.addWidget(self.RadiomicButtonsFrame)
-    self.radiomicsBatchButton = qt.QPushButton("Compute Radiomics Features (Batch Mode)")
-    self.radiomicsBatchButton.toolTip = "Run the feature extraction for database batch."
-    self.radiomicsBatchButton.enabled = True
-    self.RadiomicButtonsFrame.layout().addWidget(self.radiomicsBatchButton)
-    self.RadiomicButtonsFrame.enabled = True
-    """
-    
     #---------------------------------------------------------
     # Connections
-    #self.DatabaseButton.connect('clicked(bool)', self.onDatabaseButton)
     self.radiomicsCurrButton.connect('clicked(bool)', self.onRadiomicsCurr)
-    #self.radiomicsBatchButton.connect('clicked(bool)', self.onRadiomicsBatch)
     self.saveButton.connect('clicked()', self.onSave)
     
     self.layout.addStretch(1)     # Add vertical spacer
@@ -401,7 +296,7 @@ class RadiomicsWidget:
 
     self.selImageNode = self.input1Selector.currentNode()
     self.selLabelNode = self.input2Selector.currentNode()
-    if not SlicerDataHandlingLib.ValidateVolumes(self.selImageNode, self.selLabelNode): return
+    if not datahandling.ValidateVolumes(self.selImageNode, self.selLabelNode): return
     else: self.AdancedSettings = self.updateImageAndLabelSettingsCurr(self.AdvancedSettings, self.selImageNode,self.selLabelNode)
     
     if self.para2curr.checked: self.pythonExtract = False
@@ -414,15 +309,15 @@ class RadiomicsWidget:
 
     # Extract features current patient
     if self.pythonExtract:
-      RadiomicsPlatformLogic = RadiomicsPlatform.RadiomicsPreProcessing(self.AdvancedSettings)
-      RadiomicsPlatformLogic.ComputeRadiomicsFeatures()
+      RadiomicsPlatformLogic = radiomicsplatform.FeatureExtraction(self.AdvancedSettings)
+      RadiomicsPlatformLogic.ExtractFeatures()
       RadiomicsFeatureVector = RadiomicsPlatformLogic.GetFeatureVector()
       self.FeatureVectors.append(RadiomicsFeatureVector)
-      SlicerDataHandlingLib.PopulateRadiomicsTable(self, self.RadiomicsTableView, self.RadiomicsTableModel, self.FeatureVectors)
+      datahandling.PopulateRadiomicsTable(self, self.RadiomicsTableView, self.RadiomicsTableModel, self.FeatureVectors)
     else:
       reconstructionsDir = os.path.dirname(self.AdvancedSettings["imagefilepath"])    
-      self.outputDir, self.dataFile, self.printfilePath = SlicerDataHandlingLib.InitializeDatabase(self.pythonExtract, reconstructionsDir, self.outputDirName) 
-      RadiomicsFeatureVector = RadiomicsToolsLib.FeatureExtractionMatlab(self.selImageNode,self.selLabelNode,self.AdvancedSettings["imagefilepath"],self.AdvancedSettings["labelfilepath"],self.outputDir, self.AdvancedSettings["patientid"], self.AdvancedSettings["levels"],logfilePath=self.printfilePath)
+      self.outputDir, self.dataFile, self.printfilePath = datahandling.InitializeDatabase(self.pythonExtract, reconstructionsDir, self.outputDirName) 
+      RadiomicsFeatureVector = matlabbridge.FeatureExtractionMatlab(self.selImageNode,self.selLabelNode,self.AdvancedSettings["imagefilepath"],self.AdvancedSettings["labelfilepath"],self.outputDir, self.AdvancedSettings["patientid"], self.AdvancedSettings["levels"],logfilePath=self.printfilePath)
     
     self.saveButton.enabled = True
     self.radiomicsCurrButton.enabled = True
@@ -477,7 +372,7 @@ class RadiomicsWidget:
     if not fileName: return
     self.dataFile = fileName
     for RadiomicsFeatureVector in self.FeatureVectors:
-      SlicerDataHandlingLib.SaveDatabase(RadiomicsFeatureVector, self.dataFile)   
+      datahandling.SaveDatabase(RadiomicsFeatureVector, self.dataFile)   
     
   def onReload(self,moduleName="Radiomics"):
     """Generic reload method for any scripted module.

@@ -7,8 +7,8 @@ import itertools
 import operator
 import SimpleITK as sitk
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
-import RadiomicsPlatform.RadiomicsFeaturesLib
+import radiomicsplatform.imagearrayprocessing
+import radiomicsplatform.radiomicsfeatures
 import pdb
 
 """
@@ -66,9 +66,9 @@ Settings["patientid"]:
     The PatientID is "234056"
 """
 
-class RadiomicsPreProcessing:
+class FeatureExtraction:
 
-    def __init__(self, Settings):
+    def __init__(self, sitkImageNode, sitkLabelNode):
         self.Settings = {}
         self.Settings.update(Settings)
         self.RadiomicsFeatureVector = collections.OrderedDict()
@@ -82,87 +82,61 @@ class RadiomicsPreProcessing:
             self.Settings["resampledpixelspacing"] = self.Settings["basepixelspacing"]
          
         # create Numpy Arrays 
-        self.imageNodeArray = RadiomicsPlatform.RadiomicsImageArrayLib.ImageToNumpyArray(self.Settings["imagefilepath"])
-        self.labelNodeArray = RadiomicsPlatform.RadiomicsImageArrayLib.ImageToNumpyArray(self.Settings["labelfilepath"])
+        self.imageNodeArray = sitk.GetArrayFromImage(sitkImage) #radiomicsplatform.imagearrayprocessing.ImageToNumpyArray(self.Settings["imagefilepath"])
+        self.labelNodeArray = sitk.GetArrayFromImage(sitkImage) #radiomicsplatform.imagearrayprocessing.ImageToNumpyArray(self.Settings["labelfilepath"])
         
         # create a rectangular matrix with the dimensions of the tumor
         # center the tumor voxels in the matrix and set the non-tumor voxels to a pad value 
-        self.matrix, self.matrixCoordinates = RadiomicsPlatform.RadiomicsImageArrayLib.PadTumorMaskToCube(self.imageNodeArray, self.labelNodeArray) 
+        self.matrix, self.matrixCoordinates = radiomicsplatform.imagearrayprocessing.PadTumorMaskToCube(self.imageNodeArray, self.labelNodeArray) 
         
-        """
-        from __main__ import vtk, qt, ctk, slicer
-        self.InitializeProgressBar(self.Settings["seriesdescription"])
-        """
-        
-    def ComputeRadiomicsFeatures(self):
+    def ExtractFeatures(self):
         # Node Information     
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "General Features")         
-        self.generalFeatures = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_General(self.Settings)
+        self.generalFeatures = radiomicsplatform.radiomicsfeatures.Radiomics_General(self.Settings)
         self.RadiomicsFeatureVector.update( self.generalFeatures.EvaluateFeatures() )         
         
         # First Order Statistics    
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "First Order Statistics")
-        self.firstOrderStatistics = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_First_Order(self.matrix, self.matrixCoordinates, self.Settings["binwidth"], self.Settings["resampledpixelspacing"])
+        self.firstOrderStatistics = radiomicsplatform.radiomicsfeatures.Radiomics_First_Order(self.matrix, self.matrixCoordinates, self.Settings["binwidth"], self.Settings["resampledpixelspacing"])
         self.RadiomicsFeatureVector.update( self.firstOrderStatistics.EvaluateFeatures() )
         # Variance and Standard Deviation in numpy are different from Matlab values
         
         # Shape Features
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "Shape Features")
-        self.shapeFeatures = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_Shape(self.matrix, self.matrixCoordinates, self.Settings["resampledpixelspacing"])
+        self.shapeFeatures = radiomicsplatform.radiomicsfeatures.Radiomics_Shape(self.matrix, self.matrixCoordinates, self.Settings["resampledpixelspacing"])
         self.RadiomicsFeatureVector.update( self.shapeFeatures.EvaluateFeatures() )
         
         # Texture Features(GLCM)
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "GLCM Texture Features")      
-        self.textureFeaturesGLCM = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_GLCM(self.matrix, self.matrixCoordinates, self.Settings["binwidth"])   
+        self.textureFeaturesGLCM = radiomicsplatform.radiomicsfeatures.Radiomics_GLCM(self.matrix, self.matrixCoordinates, self.Settings["binwidth"])   
         self.RadiomicsFeatureVector.update( self.textureFeaturesGLCM.EvaluateFeatures() )
           
         # Texture Features(GLRL)  
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "GLRL Texture Features")
-        self.textureFeaturesGLRL = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_RLGL(self.matrix, self.matrixCoordinates, self.Settings["binwidth"])
+        self.textureFeaturesGLRL = radiomicsplatform.radiomicsfeatures.Radiomics_RLGL(self.matrix, self.matrixCoordinates, self.Settings["binwidth"])
         self.RadiomicsFeatureVector.update( self.textureFeaturesGLRL.EvaluateFeatures() )
         # Recheck feature computations
         
         """
         # Texture Features(GLSZM) 
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "GLSZM Texture Features")
-        self.textureFeaturesGLSZM = RadiomicsPlatform.RadiomicsFeaturesLib.TextureGLSZM(self.matrix, self.matrixCoordinates, self.targetVoxelArray)
+        self.textureFeaturesGLSZM = radiomicsplatform.radiomicsfeatures.TextureGLSZM(self.matrix, self.matrixCoordinates, self.targetVoxelArray)
         self.RadiomicsFeatureVector.update( self.textureFeaturesGLSZM.EvaluateFeatures() )
         """
         
         
         # Laplacian of a Gaussian Features(LoG)  
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "LoG Features")
-        self.laplacianOfGaussianFeatures = RadiomicsPlatform.RadiomicsFeaturesLib.LoGFeatures(self.Settings["imagefilepath"], self.Settings["labelfilepath"], self.Settings["binwidth"], self.Settings["resampledpixelspacing"])
+        self.laplacianOfGaussianFeatures = radiomicsplatform.radiomicsfeatures.LoGFeatures(self.Settings["imagefilepath"], self.Settings["labelfilepath"], self.Settings["binwidth"], self.Settings["resampledpixelspacing"])
         self.RadiomicsFeatureVector.update( self.laplacianOfGaussianFeatures.EvaluateFeatures() )
         
       
         """
         # Wavelet Features  
         #self.UpdateProgressBar(self.Settings["seriesdescription"], "Wavelet Features")
-        self.waveletFeatures = RadiomicsPlatform.RadiomicsFeaturesLib.WaveletFeatures(self.matrix, self.matrixCoordinates, self.targetVoxelArray)
+        self.waveletFeatures = radiomicsplatform.radiomicsfeatures.WaveletFeatures(self.matrix, self.matrixCoordinates, self.targetVoxelArray)
         self.RadiomicsFeatureVector.update( self.waveletFeatures.EvaluateFeatures() )
         """
-      
-        # close progress bar
-        # self.UpdateProgressBar(self.Settings["seriesdescription"], "Populating Summary Table")
-        # self.progressBar.close()
-        # self.progressBar = None
-    
-    """
-    def InitializeProgressBar(self, imageSeriesDescription):
-        # initialize Progress Bar
-        self.progressBar = qt.QProgressDialog(slicer.util.mainWindow())
-        self.progressBar.minimumDuration = 0
-        self.progressBar.show()
-        self.progressBar.setValue(0)
-        self.progressBar.setMaximum(5)
-        self.progressBar.labelText = 'Calculating for %s: ' % imageSeriesDescription
-      
-    def UpdateProgressBar(self, nodeName, nextFeatureString):
-        self.progressBar.labelText = 'Calculating %s: %s' % (nodeName, nextFeatureString)
-        self.progressBar.setValue(self.progressBar.value + 1)
-        slicer.app.processEvents()
-    """
     
     def GetFeatureVector(self):
         return (self.RadiomicsFeatureVector)

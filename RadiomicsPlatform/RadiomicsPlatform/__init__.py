@@ -1,3 +1,3 @@
-from RadiomicsImageArrayLib import *
-from RadiomicsPreProcessingLib import *
-from RadiomicsFeaturesLib import *
+from imagearrayprocessing import *
+from featureextraction import *
+from radiomicsfeatures import *

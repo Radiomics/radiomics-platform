@@ -2,7 +2,7 @@ import numpy
 import collections
 import SimpleITK as sitk
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
+import radiomicsplatform.imagearrayprocessing
 import pdb
 
 class LoGFeatures:
@@ -65,7 +65,7 @@ class LoGFeatures:
         
         sitkImageNode_LoGFiltered = LoGFilter.Execute(sitkImageNode)        
         imageNodeArray_LoGFiltered = sitk.GetArrayFromImage(sitkImageNode_LoGFiltered)    
-        matrix_LoGFiltered, matrixCoordinates_LoGFiltered = RadiomicsPlatform.RadiomicsImageArrayLib.PadTumorMaskToCube(imageNodeArray_LoGFiltered, labelNodeArray)
+        matrix_LoGFiltered, matrixCoordinates_LoGFiltered = radiomicsplatform.imagearrayprocessing.PadTumorMaskToCube(imageNodeArray_LoGFiltered, labelNodeArray)
 
         return matrix_LoGFiltered, matrixCoordinates_LoGFiltered
     

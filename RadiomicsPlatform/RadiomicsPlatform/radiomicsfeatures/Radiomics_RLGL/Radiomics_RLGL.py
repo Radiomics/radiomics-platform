@@ -2,7 +2,7 @@ import numpy
 import collections
 import pdb
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
+import radiomicsplatform.imagearrayprocessing
 import Radiomics_RLGL_Matrix
 import Radiomics_RLGL_Features
 import Radiomics_RLGL_Coefficients
@@ -18,7 +18,7 @@ class Radiomics_RLGL:
         self.Coefficients = {}
         
         # binning
-        self.matrix, self.histogram = RadiomicsPlatform.RadiomicsImageArrayLib.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
+        self.matrix, self.histogram = radiomicsplatform.imagearrayprocessing.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
         self.Coefficients['Ng'] = len(self.histogram[0])
         self.Coefficients['grayLevels'] = numpy.linspace(1,self.Coefficients['Ng'],num=self.Coefficients['Ng'])
         self.Coefficients['Nr'] = numpy.max(self.matrix.shape)
