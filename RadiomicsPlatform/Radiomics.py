@@ -9,6 +9,7 @@ import itertools
 import math
 import string
 import operator
+import SimpleITK as sitk
 
 import radiomicsplatform
 import matlabbridge
@@ -51,32 +52,10 @@ class Radiomics:
 #
 
 class RadiomicsWidget:
-  def __init__(self, parent = None): 
-    try:
-      #Load Test Cases
-      imageFile = 'C:\\Users\\Vivek Narayan\\Desktop\\Breast DCE-MRI\\TestPatient1\\StudyDate1\\Reconstructions\\Pre.nrrd'
-      labelFile = 'C:\\Users\\Vivek Narayan\\Desktop\\Breast DCE-MRI\\TestPatient1\\StudyDate1\\Segmentations\\Pre_labelMap.nrrd'
-      properties = {}
-      properties['labelmap'] = True
-      imageLoad = list(slicer.util.loadVolume(imageFile, returnNode=True))
-      labelLoad = list(slicer.util.loadVolume(labelFile, properties, returnNode=True))   
-    except:
-      pass
-    
+  def __init__(self, parent = None):    
     self.selImageNode = None  # Currently selected image node for feature extraction
     self.selLabelNode = None  # Currently selected label node for feature extraction
     self.fileDialog = None
-    
-    # Data of database
-    self.mainPatientdir = ''
-    self.DBpatientNames = []
-    self.DatabaseHierarchyDict = collections.OrderedDict()
-    
-    self.outputDir = None
-    self.outputDirName  = "_RadiomicsData"
-    
-    self.datafile = None
-    self.datafileName   = ''
     
     # Feature Data
     self.FeatureVectors = []
@@ -178,22 +157,6 @@ class RadiomicsWidget:
     self.inputBinWidthField = qt.QLineEdit("25",self.AdvancedSettingsFrame)
     self.AdvancedSettingsFrameLayout.addRow(self.inputBinWidth, self.inputBinWidthField )
     
-    # Modality Radio Buttons Frame
-    self.ModalityRadioButtonFrame = qt.QFrame(self.AdvancedSettingsFrame)
-    self.ModalityRadioButtonFrame.setLayout(qt.QHBoxLayout())
-    self.ModalityFileFormatGroup = qt.QButtonGroup(self.ModalityRadioButtonFrame)
-    self.CTButton = qt.QRadioButton("CT")
-    self.CTButton.checked = True
-    self.MRIButton = qt.QRadioButton("MRI")
-    self.PETButton = qt.QRadioButton("PET")
-    self.ModalityFileFormatGroup.addButton(self.CTButton)
-    self.ModalityFileFormatGroup.addButton(self.MRIButton)
-    self.ModalityFileFormatGroup.addButton(self.PETButton)
-    self.ModalityRadioButtonFrame.layout().addWidget(self.CTButton)
-    self.ModalityRadioButtonFrame.layout().addWidget(self.MRIButton)
-    self.ModalityRadioButtonFrame.layout().addWidget(self.PETButton)
-    self.ModalityInputLabel = qt.QLabel("Image Modality:", self.AdvancedSettingsFrame)
-    self.AdvancedSettingsFrameLayout.addRow(self.ModalityInputLabel, self.ModalityRadioButtonFrame)
     # 
     # End Universal Advanced Settings Collapsible Button
     #
@@ -309,9 +272,15 @@ class RadiomicsWidget:
 
     # Extract features current patient
     if self.pythonExtract:
-      RadiomicsPlatformLogic = radiomicsplatform.FeatureExtraction(self.AdvancedSettings)
+      self.sitkImageNode = sitk.ReadImage(self.AdancedSettings["imagefilepath"])
+      self.sitkLabelNode = sitk.ReadImage(self.AdvancedSettings["labelfilepath"])
+      
+      RadiomicsPlatformLogic = radiomicsplatform.FeatureExtraction(self.sitkImageNode, self.sitkLabelNode)
+      RadiomicsPlatformLogic.SetResampledPixelSpacing(self.AdvancedSettings["resampledpixelspacing"])
+      RadiomicsPlatformLogic.SetBinWidth(self.AdancedSettings["binwidth"])  
       RadiomicsPlatformLogic.ExtractFeatures()
       RadiomicsFeatureVector = RadiomicsPlatformLogic.GetFeatureVector()
+      
       self.FeatureVectors.append(RadiomicsFeatureVector)
       datahandling.PopulateRadiomicsTable(self, self.RadiomicsTableView, self.RadiomicsTableModel, self.FeatureVectors)
     else:
@@ -333,9 +302,6 @@ class RadiomicsWidget:
     elif self.ip3x3x3Button.checked: AdvancedSettings["resampledpixelspacing"] = (3,3,3)
     
     AdvancedSettings["binwidth"] = int(self.inputBinWidthField.text.strip())
-    if self.CTButton.checked: AdvancedSettings["modality"] = "CT"
-    elif self.MRIButton.checked: AdvancedSettings["modality"] = "MRI"
-    elif self.PETButton.checked: AdvancedSettings["modality"] = "PET"
     
     return AdvancedSettings
     
@@ -343,9 +309,7 @@ class RadiomicsWidget:
     # Set the directory to store the data (directory with the image files)
     AdvancedSettings["imagefilepath"] = selImageNode.GetStorageNode().GetFileName()
     AdvancedSettings["labelfilepath"] = selLabelNode.GetStorageNode().GetFileName()
-    AdvancedSettings["basepixelspacing"] = selImageNode.GetSpacing()
-    AdvancedSettings["dimensions"] = selImageNode.GetImageData().GetDimensions()
-    
+
     reconstructionsDir = os.path.dirname(AdvancedSettings["imagefilepath"])
     studyDateDir = os.path.dirname(reconstructionsDir)
     patientDir = os.path.dirname(studyDateDir)
