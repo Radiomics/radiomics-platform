@@ -2,7 +2,7 @@ import numpy
 import operator
 import collections
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
+import radiomicsplatform.imagearrayprocessing
 import Radiomics_Shape_Features
 
 class Radiomics_Shape:
@@ -17,7 +17,7 @@ class Radiomics_Shape:
         
         # Pad tumor matrix by 10 voxels in each of the three dimensions
         self.maxDimsSA = tuple(map(operator.add, self.matrix.shape, ([10,10,10])))
-        self.matrixSA, self.matrixSACoordinates = RadiomicsPlatform.RadiomicsImageArrayLib.PadCubicMatrix(self.matrix, self.matrixCoordinates, self.maxDimsSA)
+        self.matrixSA, self.matrixSACoordinates = radiomicsplatform.imagearrayprocessing.PadCubicMatrix(self.matrix, self.matrixCoordinates, self.maxDimsSA)
         
         # Volume and Surface Area are pre-calculated
         self.Volume = Radiomics_Shape_Features.volumeMM3(self.targetVoxelArray, self.cubicMMPerVoxel)

@@ -2,7 +2,7 @@ import numpy
 import collections
 import pdb
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
+import radiomicsplatform.imagearrayprocessing
 import Radiomics_GLCM_Matrix
 import Radiomics_GLCM_Features
 import Radiomics_GLCM_Coefficients
@@ -18,7 +18,7 @@ class Radiomics_GLCM:
         self.Coefficients = {}
         
         # binning
-        self.matrix, self.histogram = RadiomicsPlatform.RadiomicsImageArrayLib.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
+        self.matrix, self.histogram = radiomicsplatform.imagearrayprocessing.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
         self.Coefficients['Ng'] = len(self.histogram[0])
         
         self.P_glcm = Radiomics_GLCM_Matrix.CreateGLCM(self.Coefficients['Ng'], self.matrix, self.matrixCoordinates)

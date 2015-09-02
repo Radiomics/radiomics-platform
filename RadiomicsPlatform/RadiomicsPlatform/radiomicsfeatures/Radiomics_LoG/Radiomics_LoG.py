@@ -2,23 +2,21 @@ import numpy
 import collections
 import SimpleITK as sitk
 
-import RadiomicsPlatform.RadiomicsImageArrayLib
+import radiomicsplatform.imagearrayprocessing
 import pdb
 
-class LoGFeatures:
+class Radiomics_LoG:
 
-    def __init__(self, imageFilePath, labelFilePath, binwidth, pixelSpacing):
-        self.sigmaValues = numpy.arange(5.0, 0.0, -0.5)[::-1]
-
-        self.imageFilePath = imageFilePath
-        self.labelFilePath = labelFilePath
+    def __init__(self, sitkImageNode, sitkLabelNode, binwidth, pixelSpacing):
+        self.sitkImageNode = sitkImageNode
+        self.sitkLabelNode = sitkLabelNode
         self.binwidth = binwidth
         self.pixelSpacing = pixelSpacing
         
-        self.sitkImageNode = sitk.ReadImage(imageFilePath)
-        self.sitkLabelNode = sitk.ReadImage(labelFilePath)
         self.labelNodeArray = sitk.GetArrayFromImage(self.sitkLabelNode)  
         
+        self.sigmaValues = numpy.arange(5.0, 0.0, -0.5)[::-1]
+        # Bin after filter or before filter?
         #self.bincount = numpy.ceil((numpy.max(self.parameterValues) - numpy.min(self.parameterValues))/float(self.binwidth))
         #self.cubicMMPerVoxel = reduce(lambda x,y: x*y , self.pixelSpacing)
         
@@ -31,9 +29,8 @@ class LoGFeatures:
         for sigma in self.sigmaValues:
             matrix_LoGFiltered, matrixCoordinates_LoGFiltered = self.ApplyLoGFilter(self.sitkImageNode, self.labelNodeArray, sigma)
             
-            qwert = matrix_LoGFiltered.copy()
-            
-            pdb.set_trace()
+            #qwert = matrix_LoGFiltered.copy()
+            #pdb.set_trace()
             
             try:
                 LoGFeatureVector = collections.OrderedDict()
@@ -42,16 +39,16 @@ class LoGFeatures:
                 # filteredImageValuesPos = filteredImageValues[filteredImageValues>=0]
                 # later, when computing
             
-                LoGFirstOrderStatistics = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_First_Order(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth, self.pixelSpacing)
+                LoGFirstOrderStatistics = radiomicsplatform.radiomicsfeatures.Radiomics_First_Order(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth, self.pixelSpacing)
                 LoGFeatureVector.update( LoGFirstOrderStatistics.EvaluateFeatures() )
                 
-                LoGTextureFeaturesGLCM = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_GLCM(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)   
+                LoGTextureFeaturesGLCM = radiomicsplatform.radiomicsfeatures.Radiomics_GLCM(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)   
                 LoGFeatureVector.update( LoGTextureFeaturesGLCM.EvaluateFeatures() )
             
-                LoGTextureFeaturesGLRL = RadiomicsPlatform.RadiomicsFeaturesLib.Radiomics_RLGL(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)
+                LoGTextureFeaturesGLRL = radiomicsplatform.radiomicsfeatures.Radiomics_RLGL(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)
                 LoGFeatureVector.update( LoGTextureFeaturesGLRL.EvaluateFeatures() )
             
-                #LoGTextureFeaturesGLSZM = RadiomicsPlatform.RadiomicsFeaturesLib.TextureGLSZM(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)
+                #LoGTextureFeaturesGLSZM = radiomicsplatform.radiomicsfeatures.TextureGLSZM(matrix_LoGFiltered, matrixCoordinates_LoGFiltered, self.binwidth)
                 #LoGFeatureVector.update( LoGTextureFeaturesGLSZM.EvaluateFeatures() )
             except IndexError:
                 continue
@@ -65,7 +62,7 @@ class LoGFeatures:
         
         sitkImageNode_LoGFiltered = LoGFilter.Execute(sitkImageNode)        
         imageNodeArray_LoGFiltered = sitk.GetArrayFromImage(sitkImageNode_LoGFiltered)    
-        matrix_LoGFiltered, matrixCoordinates_LoGFiltered = RadiomicsPlatform.RadiomicsImageArrayLib.PadTumorMaskToCube(imageNodeArray_LoGFiltered, labelNodeArray)
+        matrix_LoGFiltered, matrixCoordinates_LoGFiltered = radiomicsplatform.imagearrayprocessing.PadTumorMaskToCube(imageNodeArray_LoGFiltered, labelNodeArray)
 
         return matrix_LoGFiltered, matrixCoordinates_LoGFiltered
     
