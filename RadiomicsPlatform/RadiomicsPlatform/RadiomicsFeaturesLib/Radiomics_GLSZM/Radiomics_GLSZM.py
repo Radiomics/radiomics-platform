@@ -2,7 +2,7 @@ import numpy
 import collections
 import pdb
 
-import radiomicsplatform.imagearrayprocessing
+import RadiomicsPlatform.RadiomicsImageArrayLib
 import Radiomics_GLSZM_Coefficients
 import Radiomics_GLSZM_Features
 import Radiomics_GLSZM_Matrix
@@ -18,7 +18,7 @@ class TextureGLSZM:
         self.Coefficients = {}
         
         # binning
-        self.matrix, self.histogram = radiomicsplatform.imagearrayprocessing.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
+        self.matrix, self.histogram = RadiomicsPlatform.RadiomicsImageArrayLib.BinImage(self.binwidth, self.targetVoxelArray, self.matrix, self.matrixCoordinates)
         self.Coefficients['Ng'] = len(self.histogram[0])
         self.Coefficients['grayLevels'] = numpy.linspace(1,self.Coefficients['Ng'],num=self.Coefficients['Ng'])
         self.Coefficients['Nr'] = numpy.max(self.matrix.shape)

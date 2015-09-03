@@ -22,6 +22,9 @@ def binWidth(Settings):
   
 def labelLevels(Settings):
     return(Settings["levels"])
+  
+def imageModality(Settings):
+    return(Settings["modality"])
     
 def patientID(Settings):
     return(Settings["patientid"])
